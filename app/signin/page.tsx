@@ -1,11 +1,10 @@
-import Signin from "@/components/signin";
-import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
 import React from "react";
+import Signin from "@/components/signin";
+import { redirect } from "next/navigation";
+import { getServerSession } from "@/lib/server-session";
 
 export default async function SigninPage() {
-  const currentSession = await authClient.getSession();
-
-  if (currentSession.data) redirect("/");
+  const session = await getServerSession();
+  if (session) redirect("/");
   return <Signin />;
 }

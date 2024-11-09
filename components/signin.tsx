@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { Github } from "lucide-react";
 
 export default function Signin() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -44,7 +45,7 @@ export default function Signin() {
             disabled={isLoading}
             className="w-full"
           >
-            {/* <Github className="mr-2 h-4 w-4" /> */}
+            <Github className="mr-2 h-4 w-4" />
             Sign in with GitHub
           </Button>
           <Button
