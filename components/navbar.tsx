@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
 
@@ -13,21 +11,11 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "./theme-toggle";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { siteConfig } from "@/config/site";
 import { Icons } from "./icons";
-import { authClient } from "@/lib/auth-client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "./ui/skeleton";
+import { SignInButton, SignInFallback } from "./signin-btn";
 
 const musicLinks: { title: string; href: string; description: string }[] = [
   {
@@ -64,8 +52,14 @@ const musicLinks: { title: string; href: string; description: string }[] = [
 ];
 
 export function NavBar() {
-  const { data: session, isPending, error } = authClient.useSession();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const githubLink = React.useMemo(
+    () => ({
+      href: siteConfig.links.github,
+      label: "GitHub repo",
+    }),
+    []
+  );
+
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
@@ -148,47 +142,12 @@ export function NavBar() {
           </NavigationMenu>
         </nav>
         <nav className="flex items-center gap-1">
-          {isPending ? null : (
-            <>
-              {session ? (
-                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(isOpen && "bg-accent")}
-                    >
-                      <Avatar className="size-6 rounded-md">
-                        <AvatarImage src={session.user.image} />
-                        <AvatarFallback>
-                          {session.user.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={async () => await authClient.signOut()}
-                    >
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link
-                  href="/signin"
-                  prefetch
-                  className={cn(buttonVariants({ variant: "default" }))}
-                >
-                  Sign In
-                </Link>
-              )}
-            </>
-          )}
+          <React.Suspense fallback={<SignInFallback />}>
+            <SignInButton />
+          </React.Suspense>
           <Link
-            aria-label="GitHub repo"
-            href={siteConfig.links.github}
+            href={githubLink.href}
+            aria-label={githubLink.label}
             className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
             target="_blank"
             rel="noopener noreferrer"
