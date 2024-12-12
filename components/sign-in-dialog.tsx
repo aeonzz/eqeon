@@ -16,7 +16,7 @@ import Signin from "./signin";
 export default function SignInDialog() {
   const [open, setOpen] = useQueryState(
     "sign-in",
-    parseAsBoolean.withDefault(false).withOptions({ history: "replace" })
+    parseAsBoolean.withDefault(false).withOptions({ history: "replace" }),
   );
 
   return (
